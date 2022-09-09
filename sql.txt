@@ -1,0 +1,7 @@
+select mo.nombre Modelo_Coche, ma.nombre Marca, ge.nombre Grupo_Empresarial, co.fecha_compra Fecha_De_Compra, co.id_matricula Matricula, c.nombre  Color , co.km_actual  KM_Actual, a.nombre  Aseguradora, co.num_poliza Num_poliza from pBelisa.coche co
+join pbelisa.modelo mo on mo.id_modelo =co.id_modelo 
+join pbelisa.marca ma on ma.id_marca = mo.id_marca 
+join pbelisa.grupo_empresarial ge on ge.id_grupo =ma.id_grupo 
+join pbelisa.color c on c.id_color =co.id_color 
+join pbelisa.aseguradora a on a.id_aseguradora =co.id_aseguradora 
+order by co.fecha_compra 

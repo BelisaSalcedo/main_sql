@@ -1,0 +1,224 @@
+create schema pBelisa authorization jhbpphvq
+
+--Creamos la Tabla Color
+create table pBelisa.color(
+	id_color varchar (20) not null, --pk
+	nombre varchar(200) not null,
+	descripcion varchar(512) null
+);
+
+alter table pBelisa.color
+add constraint color_PK primary key (id_color);
+
+
+--Creamos la Tabla Moneda
+create table pBelisa.moneda(
+	id_moneda varchar (20) not null, --pk
+	nombre varchar(200) not null,
+	descripcion varchar(512) null
+);
+
+alter table pBelisa.moneda
+add constraint moneda_PK primary key (id_moneda);
+
+---Creamos la tabla aseguradora
+create table pBelisa.aseguradora(
+	id_aseguradora varchar (20) not null, --pk
+	nombre varchar(200) not null,
+	descripcion varchar(512) null
+);
+
+alter table pBelisa.aseguradora
+add constraint aseguradora_PK primary key (id_aseguradora);
+
+
+--Creamos la Tabla de Grupo Empresarial
+create table pBelisa.grupo_empresarial(
+	id_grupo varchar (20) not null, --pk
+	nombre varchar(200) not null,
+	descripcion varchar(512) null
+);
+
+alter table pBelisa.grupo_empresarial
+add constraint grupo_empresarial_PK primary key (id_grupo);
+
+--Creamos la Tabla de Marca
+create table pBelisa.marca(
+	id_marca varchar (20) not null, --pk
+	id_grupo  varchar (20) not null,--FK
+	nombre varchar(200) not null,
+	descripcion varchar(512) null
+);
+
+alter table pBelisa.marca
+add constraint marca_PK primary key (id_marca);
+--FK
+alter table pBelisa.marca
+add constraint marca_grupo_empresarial_FK 
+				foreign key (id_grupo) 
+				references pBelisa.grupo_empresarial (id_grupo);
+			
+--Creamos la Tabla Modelo
+create table pBelisa.modelo(
+	id_modelo varchar (20) not null, --pk
+	id_marca  varchar (20) not null,--FK
+	nombre varchar(200) not null,
+	descripcion varchar(512) null
+);
+
+alter table pBelisa.modelo
+add constraint modelo_PK primary key (id_modelo);
+--FK
+alter table pBelisa.modelo
+add constraint modelo_marca_FK 
+				foreign key (id_marca) 
+				references pBelisa.marca (id_marca);
+
+--Creamos la Tabla coche
+create table pBelisa.coche(
+	id_coche varchar (20)  not null, --pk
+	id_matricula  varchar (100) not null,
+	id_color varchar(20) not null,--FK
+	num_poliza varchar(200) not null,
+	fecha_compra date not null,
+	precio_compra numeric not null ,
+	id_moneda varchar (20) not null,--FK
+	id_modelo varchar (20) not null,--FK
+	km_actual numeric not null default 0,
+	id_aseguradora varchar (20) not null,--Fk
+	descripcion varchar(512) null
+);
+alter table pBelisa.coche
+add constraint coche_PK primary key (id_coche);
+
+alter table pBelisa.coche
+add constraint coche_color_FK foreign key (id_color) 
+references pBelisa.color(id_color); --FK color
+
+alter table pBelisa.coche
+add constraint coche_moneda_FK foreign key (id_moneda) 
+references pBelisa.moneda(id_moneda); --FK moneda
+
+alter table pBelisa.coche
+add constraint coche_modelo_FK foreign key (id_modelo) 
+references pBelisa.modelo(id_modelo); --FK modelo
+
+alter table pBelisa.coche
+add constraint coche_aseguradora_FK foreign key (id_aseguradora) 
+references pBelisa.aseguradora(id_aseguradora); --FK aseguradora
+
+
+
+--Creamos la tabla revision
+create table pBelisa.revisiones(
+	id_coche varchar (20)  not null, --pk,FK
+	fecha_revision date not null,--PK 
+	precio_revision numeric not null default 0,
+	km_revision numeric not null default 0,
+	id_moneda varchar (20) not null,--Fk
+	descripcion varchar(512) null
+);
+alter table pBelisa.revisiones
+add constraint revisiones_PK primary key (id_coche,fecha_revision );
+
+
+
+alter table pBelisa.revisiones
+add constraint revisiones_moneda_FK foreign key (id_moneda) 
+references pBelisa.moneda(id_moneda); --FK moneda
+
+alter table pBelisa.revisiones
+add constraint revisiones_coche_FK foreign key (id_coche) 
+references pBelisa.coche(id_coche); --FK coche
+
+
+---Hacemos los insert
+insert into pbelisa.color (id_color, nombre) values	('rj', 'rojo');
+insert into pbelisa.color (id_color, nombre) values	('wh', 'blanco');
+insert into pbelisa.color (id_color, nombre) values	('ng','negro');
+insert into pbelisa.color (id_color, nombre) values	('az','azul');
+--
+insert into pBelisa.moneda (id_moneda, nombre) values	('EUR','euros');
+insert into pBelisa.moneda (id_moneda, nombre) values	('USD', 'dolar');
+insert into pBelisa.moneda (id_moneda, nombre) values	('MX','peso mexicano');
+insert into pBelisa.moneda (id_moneda, nombre) values	('L','libras');
+--select * from pbelisa.moneda 
+--
+
+insert into pBelisa.aseguradora (id_aseguradora, nombre) values	('1', 'Mafre')	;
+insert into pBelisa.aseguradora (id_aseguradora, nombre) values	('2', 'Santa Lucia')	;
+insert into pBelisa.aseguradora (id_aseguradora, nombre) values	('3', 'Mutua Madrileña')	;
+insert into pBelisa.aseguradora (id_aseguradora, nombre) values	('4', 'Axa')	;
+--select * from pBelisa.aseguradora
+
+--
+insert into pBelisa.grupo_empresarial (id_grupo, nombre) values	('1','VAN')	;
+insert into pBelisa.grupo_empresarial (id_grupo, nombre) values	('2','Groupe Renault')	;
+insert into pBelisa.grupo_empresarial (id_grupo, nombre) values	('3','Group BMW')	;
+insert into pBelisa.grupo_empresarial (id_grupo, nombre) values	('4','Grupo PSA')	;
+
+--select * from pbelisa.grupo_empresarial 
+---
+insert into pBelisa.marca (id_marca, id_grupo, nombre) values	('1', '1', 'SEAT')	;
+insert into pBelisa.marca (id_marca, id_grupo, nombre) values	('2', '1', 'AUDI')	;
+insert into pBelisa.marca (id_marca, id_grupo, nombre) values	('3', '1', 'VW')	;
+insert into pBelisa.marca (id_marca, id_grupo, nombre) values	('4', '2', 'RENAULT')	;
+insert into pBelisa.marca (id_marca, id_grupo, nombre) values	('5', '2', 'Volvo')	;
+insert into pBelisa.marca (id_marca, id_grupo, nombre) values	('6', '3', 'BMW')	;
+insert into pBelisa.marca (id_marca, id_grupo, nombre) values	('7', '3', 'Mini')	;
+insert into pBelisa.marca (id_marca, id_grupo, nombre) values	('8', '3', 'Rolls-Royce')	;
+insert into pBelisa.marca (id_marca, id_grupo, nombre) values	('9', '4', 'OPEL')	;
+insert into pBelisa.marca (id_marca, id_grupo, nombre) values	('10', '4', 'Peugeot')	;
+insert into pBelisa.marca (id_marca, id_grupo, nombre) values	('11', '4', 'Citroen')	;
+--select * from pBelisa.marca
+--
+
+insert into pBelisa.modelo (id_modelo,id_marca, nombre) values	('1', '11', 'Berlingo')	;
+insert into pBelisa.modelo (id_modelo,id_marca, nombre) values	('2', '11', 'Cactus')	;
+insert into pBelisa.modelo (id_modelo,id_marca, nombre) values	('3', '11', 'C1')	;
+insert into pBelisa.modelo (id_modelo,id_marca, nombre) values	('4', '11', 'C3')	;
+insert into pBelisa.modelo (id_modelo,id_marca, nombre) values	('5', '10', 'Peugeot-SUV 2008')	;
+insert into pBelisa.modelo (id_modelo,id_marca, nombre) values	('6', '10', 'Peugeot-308 SW')	;
+insert into pBelisa.modelo (id_modelo,id_marca, nombre) values	('7', '9', 'CORSA BERLINA')	;
+insert into pBelisa.modelo (id_modelo,id_marca, nombre) values	('8', '9', 'MOKKA-E SUV')	;
+insert into pBelisa.modelo (id_modelo,id_marca, nombre) values	('9', '9', 'GRANDLAND SUV')	;
+insert into pBelisa.modelo (id_modelo,id_marca, nombre) values	('10', '7', 'MINI CLUBMAN')	;
+insert into pBelisa.modelo (id_modelo,id_marca, nombre) values	('11', '7', 'MINI 3 PUERTAS')	;
+insert into pBelisa.modelo (id_modelo,id_marca, nombre) values	('12', '1', 'SEAT Ibiza')	;
+insert into pBelisa.modelo (id_modelo,id_marca, nombre) values	('13', '1', 'SEAT Ateca')	;
+insert into pBelisa.modelo (id_modelo,id_marca, nombre) values	('14', '1', 'SEAT Leon')	;
+insert into pBelisa.modelo (id_modelo,id_marca, nombre) values	('15', '1', 'SEAT Arona')	;
+--select * from pBelisa.modelo
+--
+--select * from pBelisa.coche 
+insert into pBelisa.coche  (id_coche, id_matricula, id_color, num_poliza, fecha_compra, precio_compra, id_moneda, id_modelo, km_actual, id_aseguradora) values	('1', '1278AA', 'rj', '1111A','2020-01-01', 50000,'EUR', '13',10000,'1')	;
+insert into pBelisa.coche (id_coche, id_matricula, id_color, num_poliza, fecha_compra, precio_compra, id_moneda, id_modelo, km_actual, id_aseguradora) values	('2', '1278BB', 'wh', '1111B','2019-01-01', 20000,'EUR', '14',30000,'2')	;
+insert into pBelisa.coche (id_coche, id_matricula, id_color, num_poliza, fecha_compra, precio_compra, id_moneda, id_modelo, km_actual, id_aseguradora) values	('3', '1278CC', 'wh', '1111C','2018-01-01', 30000,'EUR', '8',70000,'4')	;
+insert into pBelisa.coche (id_coche, id_matricula, id_color, num_poliza, fecha_compra, precio_compra, id_moneda, id_modelo, km_actual, id_aseguradora) values	('4', '1278DD', 'az', '1111D','2020-11-01', 35000,'USD', '9',20000,'1')	;
+insert into pBelisa.coche (id_coche, id_matricula, id_color, num_poliza, fecha_compra, precio_compra, id_moneda, id_modelo, km_actual, id_aseguradora) values	('5', '1278FF', 'ng', '1111E','2020-12-22', 50000,'L', '15',50000,'3')	;
+insert into pBelisa.coche (id_coche, id_matricula, id_color, num_poliza, fecha_compra, precio_compra, id_moneda, id_modelo, km_actual, id_aseguradora) values	('6', '1278EE', 'rj', '1111F','2022-01-01', 24000,'EUR', '1',10000,'1')	;
+insert into pBelisa.coche (id_coche, id_matricula, id_color, num_poliza, fecha_compra, precio_compra, id_moneda, id_modelo, km_actual, id_aseguradora) values	('7', '1278GG', 'ng', '1111G','2017-11-01', 50000,'EUR', '12',10000,'3')	;
+insert into pBelisa.coche (id_coche, id_matricula, id_color, num_poliza, fecha_compra, precio_compra, id_moneda, id_modelo, km_actual, id_aseguradora) values	('8', '1278HH', 'ng', '1111H','2021-01-01', 50000,'MX', '13',10000,'3')	;
+insert into pBelisa.coche (id_coche, id_matricula, id_color, num_poliza, fecha_compra, precio_compra, id_moneda, id_modelo, km_actual, id_aseguradora) values	('9', '1278II', 'wh', '1111I','2022-01-01', 50000,'MX', '10',10000,'2')	;
+insert into pBelisa.coche (id_coche, id_matricula, id_color, num_poliza, fecha_compra, precio_compra, id_moneda, id_modelo, km_actual, id_aseguradora) values	('10', '1278JJ', 'wh', '1111J','2019-05-01', 40000,'EUR', '6',10000,'1')	;
+insert into pBelisa.coche (id_coche, id_matricula, id_color, num_poliza, fecha_compra, precio_compra, id_moneda, id_modelo, km_actual, id_aseguradora) values	('11', '1278KK', 'rj', '1111K','2018-01-01', 50000,'EUR', '13',10000,'1')	;
+insert into pBelisa.coche (id_coche, id_matricula, id_color, num_poliza, fecha_compra, precio_compra, id_moneda, id_modelo, km_actual, id_aseguradora) values	('12', '1278LL', 'rj', '1111L','2020-07-01', 50000,'EUR', '13',10000,'1')	;
+insert into pBelisa.coche (id_coche, id_matricula, id_color, num_poliza, fecha_compra, precio_compra, id_moneda, id_modelo, km_actual, id_aseguradora) values	('13', '1278MM', 'az', '1111M','2019-06-01', 50000,'USD', '10',10000,'1')	;
+insert into pBelisa.coche (id_coche, id_matricula, id_color, num_poliza, fecha_compra, precio_compra, id_moneda, id_modelo, km_actual, id_aseguradora) values	('14', '1278NN', 'az', '1111N','2019-04-01', 50000,'USD', '4',10000,'3')	;
+insert into pBelisa.coche (id_coche, id_matricula, id_color, num_poliza, fecha_compra, precio_compra, id_moneda, id_modelo, km_actual, id_aseguradora) values	('15', '1278OO', 'rj', '1111O','2021-06-01', 50000,'EUR', '15',2000,'3')	;
+--
+--select * from pBelisa.revisiones
+insert into pBelisa.revisiones (id_coche, fecha_revision, precio_revision, km_revision,id_moneda) values	('14', '2020-04-01', 200, 5000,'USD')	;
+insert into pBelisa.revisiones (id_coche, fecha_revision, precio_revision, km_revision,id_moneda) values	('14', '2021-04-01', 250, 7000,'USD')	;
+insert into pBelisa.revisiones (id_coche, fecha_revision, precio_revision, km_revision,id_moneda) values	('14', '2022-04-01', 300, 8000,'USD')	;
+insert into pBelisa.revisiones (id_coche, fecha_revision, precio_revision, km_revision,id_moneda) values	('11', '2019-01-01', 700, 2000,'EUR')	;
+insert into pBelisa.revisiones (id_coche, fecha_revision, precio_revision, km_revision,id_moneda) values	('11', '2020-04-01', 200, 7000,'EUR')	;
+insert into pBelisa.revisiones (id_coche, fecha_revision, precio_revision, km_revision,id_moneda) values	('11', '2021-04-01', 300, 8000,'EUR')	;
+insert into pBelisa.revisiones (id_coche, fecha_revision, precio_revision, km_revision,id_moneda) values	('11', '2022-04-01', 300, 9000,'EUR')	;
+insert into pBelisa.revisiones (id_coche, fecha_revision, precio_revision, km_revision,id_moneda) values	('8', '2021-05-11', 1300, 9000,'MX')	;
+
+insert into pBelisa.revisiones (id_coche, fecha_revision, precio_revision, km_revision,id_moneda) values	('1', '2022-06-11', 500, 1000,'EUR')	;
+insert into pBelisa.revisiones (id_coche, fecha_revision, precio_revision, km_revision,id_moneda) values	('2', '2022-08-23', 600, 1000,'EUR')	;
+insert into pBelisa.revisiones (id_coche, fecha_revision, precio_revision, km_revision,id_moneda) values	('3', '2020-02-03', 550, 1000,'EUR')	;
+
+
